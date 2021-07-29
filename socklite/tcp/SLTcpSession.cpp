@@ -6,156 +6,215 @@
 //
 
 #include "socklite/tcp/SLTcpSession.h"
-#include "socklite/tcp/SLTcpSocket.h"
-#include "socklite/tcp/async/SLTcpHandThread.h"
-#include "socklite/tcp/async/SLTcpSendThread.h"
-#include "socklite/tcp/async/SLTcpRecvThread.h"
+//#include "cocos2d.h"
 
 NS_SOCKLITE_BEGIN
 
-SLTcpSession::SLTcpSession():delegate(NULL),socketState(TcpSockClosed)
+//:_isDestroyed(std::make_shared<std::atomic<bool>>(false))
+SLTcpSession::SLTcpSession()
+:_delegate(NULL)
+,_connStat(SLConnState::DISCONN)
+,_connTime(0.0f)
+,_sendBufLen(0)
+,_recvBufLen(0)
+,_recvBufPos(0)
 {
-    socket = new SLTcpSocket();
-    handThread = new SLTcpHandThread(socket);
-    sendThread = new SLTcpSendThread(socket);
-    recvThread = new SLTcpRecvThread(socket);
+    SL_ASSERT(0 == (RECV_BUF_SIZE & RECV_BUF_IEND), "recv buffer size need pow2");
+    memset(_sendBuffer, 0, SEND_BUF_SIZE);
+    memset(_recvBuffer, 0, RECV_BUF_SIZE);
 }
 
 SLTcpSession::~SLTcpSession()
 {
-    delegate = NULL;
-    synchronizeClose();
-    SL_SAFE_DELETE(handThread);
-    SL_SAFE_DELETE(sendThread);
-    SL_SAFE_DELETE(recvThread);
-    SL_SAFE_DELETE(socket);
+//    *_isDestroyed = true;
+    _connStat = SLConnState::DISCONN;
+    _delegate = NULL;
+    _sendBufLen = 0;
+    _recvBufLen = 0;
+    _recvBufPos = 0;
+    
 }
 
 void SLTcpSession::setDelegate(SLTcpDelegate *delegate)
 {
-    this->delegate = delegate;
+    _delegate = delegate;
 }
 
-void SLTcpSession::send(SLTcpSendPacket *packet)
+void SLTcpSession::update(const f32 &dt)
 {
-    sendThread->pushPacket(packet);
-}
-
-void SLTcpSession::connect(const char *host, u16 port)
-{
-    SL_ASSERT(TcpSockLinked != socketState, "socket already connected");
-    handThread->beginConnect(host, port);
-}
-
-void SLTcpSession::onConnectResult(bool isOk)
-{
-    handThread->endConnect();
-    if (isOk) {
-        socketState = TcpSockLinked;
-        if (recvThread->isAlive()) {
-            recvThread->resume();
-        } else {
-            recvThread->begin();
+    switch (_connStat) {
+        case SLConnState::CONNED: {
+            if (_socket.sl_valid()) {
+                this->handleIO();
+            } else {
+                _connStat = SLConnState::DISCONN;
+                _delegate->onDisconnect(this);
+            }
+            break;
         }
-        if (sendThread->isAlive()) {
-            sendThread->resume();
-        } else {
-            sendThread->begin();
+        case SLConnState::CONNING: {
+            _connTime += dt;
+            if (_connTime > MAX_SOCK_CONN_SEC) {
+                _connTime = 0.0;
+                _connStat = SLConnState::DISCONN;
+                _delegate->onConnectResp(this, false);// connect timeout
+            } else if (_socket.sl_check_conn()) {
+                _connTime = 0.0;
+                _connStat = SLConnState::CONNED;
+                _delegate->onConnectResp(this, true);
+            }
+            break;
         }
-    }
-    if (delegate) {
-        delegate->onConnectResp(this, isOk);
+        default: break;
     }
 }
 
 void SLTcpSession::close()
 {
-    SL_ASSERT(TcpSockClosed != socketState, "socket already closed");
-    handThread->beginClose();
+    _socket.sl_close();
+    _connStat = SLConnState::DISCONN;
+    _connTime = 0.0;
+    _sendBufLen = 0;
+    _recvBufLen = 0;
+    _recvBufPos = 0;
+    memset(_sendBuffer, 0, SEND_BUF_SIZE);
+    memset(_recvBuffer, 0, RECV_BUF_SIZE);
 }
-void SLTcpSession::onCloseResult(bool isOk)
+
+void SLTcpSession::connect(std::string host, u16 port)
 {
-    handThread->endClose();
-    sendThread->end();
-    recvThread->end();
-    socketState = TcpSockClosed;
-    if (delegate) {
-        delegate->onCloseResp(this, isOk);
+    SL_ASSERT(_connStat == SLConnState::DISCONN, "socket not disconnected");
+    if (_socket.sl_start_conn(host.c_str(), port, SOCK_STREAM, IPPROTO_TCP)) {
+        _connTime = 0.0;
+        _connStat = SLConnState::CONNING;
     }
 }
 
-void SLTcpSession::synchronizeClose(bool cleanup)
+bool SLTcpSession::send(const char *buf, const int &len)
 {
-	if (TcpSockClosed == socketState) {
-		SL_LOG("socket already closed");
-		return;
-	}
-    //SL_ASSERT(TcpSockClosed != socketState, "socket already closed");
-    socket->tcpClose();
-    socketState = TcpSockClosed;
-    if (cleanup) {
-        sendThread->end();
-        recvThread->end();
+    if (!_socket.sl_valid())
+    {
+        return false;
     }
-}
-
-void SLTcpSession::mainThreadTick(const f32& dt)
-{
-    if (!handThread->isIdle()) {
-        const byte& handState = handThread->getStatus();
-        if (TcpHandNon != handState) {
-            const bool isOk = TcpHandOke == handState;
-            switch (handThread->getAction()) {
-                case TcpActionConn:
-                    onConnectResult(isOk);
-                    break;
-                case TcpActionShut:
-                    onCloseResult(isOk);
-                    break;
-            }
+    if (_sendBufLen + len > SEND_BUF_SIZE)
+    {
+        flushout();
+        if (_sendBufLen + len > SEND_BUF_SIZE)
+        {
+            SL_LOG("error: Send buffer is full");
+            return false;
         }
+    }
+    memmove(_sendBuffer + _sendBufLen, buf, len);
+    _sendBufLen += len;
+    return true;
+}
+
+void SLTcpSession::flushout()
+{
+    const int outlen = _socket.sl_send(_sendBuffer, _sendBufLen);
+    if (outlen > 0)
+    {
+        const int buflen = _sendBufLen - outlen;
+        if (buflen > 0)
+        {
+            memmove(_sendBuffer, _sendBuffer + outlen, buflen);//align bytes
+        }
+        else if (buflen < 0)
+        {
+            SL_LOG("error: Flush out overflow %d_%d/%d", _sendBufLen, buflen, SEND_BUF_SIZE);
+            _sendBufLen = 0;
+            return;
+        }
+        _sendBufLen = buflen;
+    }
+}
+
+void SLTcpSession::flushin(int depth/*0*/)
+{
+    if (_recvBufLen >= RECV_BUF_SIZE)
+    {
         return;
     }
-    if (TcpSockLinked == socketState) {
-        socketRefresh();
+    int savelen, savepos, usedpos;
+    usedpos = _recvBufPos + _recvBufLen;
+    if(usedpos < RECV_BUF_SIZE)
+    {
+        savelen = RECV_BUF_SIZE - usedpos;
+        savepos = usedpos;
+    }
+    else
+    {
+        savelen = RECV_BUF_SIZE - _recvBufLen;
+        savepos = usedpos & RECV_BUF_IEND;
+    }
+    if (savepos + savelen > RECV_BUF_SIZE)
+    {
+        SL_LOG("error: savepos:%d + savelen:%d > RECV_BUF_SIZE:%d", savepos, savelen, RECV_BUF_SIZE);
+        return;
+    }
+    const int inlen = _socket.sl_recv(_recvBuffer + savepos, savelen);
+    if (inlen > 0)
+    {
+        const int buflen = _recvBufLen + inlen;
+        if (buflen > RECV_BUF_SIZE)
+        {
+            SL_LOG("error: Flush in overflow %d_%d/%d", _recvBufLen, buflen, RECV_BUF_SIZE);
+            _recvBufLen = RECV_BUF_SIZE;
+            return;
+        }
+        _recvBufLen = buflen;
+        if (inlen == savelen && buflen < RECV_BUF_SIZE)
+        {
+            if (++depth < 2)
+            {
+                flushin(depth);
+            }
+        }
     }
 }
 
-void SLTcpSession::socketRefresh()
+void SLTcpSession::handleIO()
 {
-    bool interrupted = false;
-    // TCP上行
-    if (sendThread->isAlive() && sendThread->isBreak()) {
-        interrupted = true;
+    if (_sendBufLen > 0) {
+        this->flushout();
     }
-    // TCP下行
-    if (recvThread->isAlive()) {
-        if (recvThread->isBreak()) {
-            interrupted = true;
-            sendThread->notAllowSend();
+    
+    while (_socket.sl_valid()) {
+        if (_recvBufLen < PACKET_SIZE_BT)
+        {
+            flushin();
+            SL_BREAK_IF(_recvBufLen < PACKET_SIZE_BT);
         }
-        dispatchRecvdPackets();
-    }
-    // socket break
-    if (interrupted) {
-        synchronizeClose(false);// keep send and recv thread
-        if (delegate) {
-            delegate->onDisconnect(this);
+        
+        const int pktlen = ((u8)_recvBuffer[(_recvBufPos+1) & RECV_BUF_IEND]) << 8 | ((u8)_recvBuffer[_recvBufPos]);//little-endian
+        if (pktlen <= 0 || pktlen > MAX_PACKET_SIZE)
+        {
+            SL_LOG("error: Incorrect packet length:%d", pktlen);
+            _recvBufPos = 0;
+            _recvBufLen = 0;//clear recv buffer
+            break;
         }
-    }
-}
-
-void SLTcpSession::dispatchRecvdPackets()
-{
-    static std::queue<SLTcpRecvPacket*> recvQueue;
-    recvThread->flushPackets(recvQueue);
-    while (!recvQueue.empty()) {
-        SLTcpRecvPacket *packet = recvQueue.front();
-        if (delegate) {
-            delegate->onRecvPacket(this, packet);
+        if (pktlen > _recvBufLen)
+        {
+            flushin();
+            SL_BREAK_IF(pktlen > _recvBufLen);//unfinished
         }
-        recvQueue.pop();
-        SL_DELETE(packet);
+        
+        static packet_byte buf[MAX_PACKET_SIZE] = {0};
+        if (_recvBufPos + pktlen > RECV_BUF_SIZE)
+        {
+            const int cutlen = RECV_BUF_SIZE - _recvBufPos;
+            memmove(buf, _recvBuffer + _recvBufPos, cutlen);//read head
+            memmove(buf + cutlen, _recvBuffer, pktlen - cutlen);//read tail
+        }
+        else
+        {
+            memmove(buf, _recvBuffer + _recvBufPos, pktlen);//no rewind
+        }
+        _recvBufPos = (_recvBufPos + pktlen) & RECV_BUF_IEND;
+        _recvBufLen -= pktlen;
+        _delegate->onRecvPacket(this, buf + PACKET_SIZE_BT, pktlen - PACKET_SIZE_BT);
     }
 }
 

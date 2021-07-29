@@ -9,7 +9,8 @@
 
 NS_FLASHX_BEGIN
 
-FxAnimateFrameData::FxAnimateFrameData():_motions(nullptr)
+FxAnimateFrameData::FxAnimateFrameData()
+:_motions(nullptr)
 {
 }
 

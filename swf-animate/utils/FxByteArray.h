@@ -29,7 +29,7 @@ public:
     static ByteEndian getEndianOfCPU();
     
     FxByteArray(const fxb_t& len);
-    FxByteArray(byte* buffer, const fxb_t &len, const byte &flag = 1);
+    FxByteArray(byte* buffer, const fxb_t &len, bool isOwnBuffer = false);
     virtual ~FxByteArray();
     
     bool readBool();
@@ -98,7 +98,7 @@ private:
     byte* _buffer;
     fxb_t _pos;
     fxb_t _length;
-    byte  _flag; // delete buffer on dispose
+    bool  _isOwnBuffer;
     ByteEndian _endian;
 };
 

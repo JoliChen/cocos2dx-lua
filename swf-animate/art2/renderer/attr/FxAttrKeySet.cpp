@@ -10,7 +10,9 @@
 
 NS_FLASHX_BEGIN
 
-FxAttrKeySet::FxAttrKeySet():_size(0), _keys(nullptr)
+FxAttrKeySet::FxAttrKeySet()
+:_size(0)
+,_keys(nullptr)
 {
 }
 
@@ -39,12 +41,11 @@ void FxAttrKeySet::fxall()
 
 void FxAttrKeySet::parse(FxByteArray *buffer, const u8& size)
 {
-    u8 *keys = new u8[size];
-    for (u8 n=0; n<size; ++n) {
-        keys[n] = buffer->readByte();
-    }
     _size = size;
-    _keys = keys;
+    _keys = new u8[size];
+    for (u8 n=0; n<size; ++n) {
+        _keys[n] = buffer->readByte();
+    }
 }
 
 NS_FLASHX_END /* NS_FLASHX_BEGIN */

@@ -6,7 +6,7 @@
 //
 
 #include "flashx/art2/animate/FxAnimParticle.h"
-#include "flashx/art2/manager/FxDataManager.h"
+#include "flashx/manager/FxDataManager.h"
 
 NS_FLASHX_BEGIN
 

@@ -1,15 +1,9 @@
 
 --------------------------------
 -- @module FxUnitManager
+-- @extend Ref
 -- @parent_module flashx
 
---------------------------------
--- 构造心跳单元<br>
--- return 心跳单元
--- @function [parent=#FxUnitManager] newTicker 
--- @param self
--- @return FxUnit#FxUnit ret (return value: flashx.FxUnit)
-        
 --------------------------------
 -- 计算心跳单元数量<br>
 -- return 心跳单元数量
@@ -24,10 +18,17 @@
 -- @return FxUnitManager#FxUnitManager self (return value: flashx.FxUnitManager)
         
 --------------------------------
--- 回收心跳单元
--- @function [parent=#FxUnitManager] delUnit 
+-- 移除单元<br>
+-- param unit 单元对象
+-- @function [parent=#FxUnitManager] removeUnit 
 -- @param self
 -- @param #flashx.FxUnit unit
+-- @return FxUnitManager#FxUnitManager self (return value: flashx.FxUnitManager)
+        
+--------------------------------
+-- 移除未使用的单元
+-- @function [parent=#FxUnitManager] removeUnusedUnits 
+-- @param self
 -- @return FxUnitManager#FxUnitManager self (return value: flashx.FxUnitManager)
         
 --------------------------------
@@ -45,6 +46,22 @@
 -- @return FxUnitManager#FxUnitManager self (return value: flashx.FxUnitManager)
         
 --------------------------------
+-- 构造心跳单元<br>
+-- return 心跳单元
+-- @function [parent=#FxUnitManager] fetchTicker 
+-- @param self
+-- @return FxTicker#FxTicker ret (return value: flashx.FxTicker)
+        
+--------------------------------
+-- 构建动画<br>
+-- param animateId 动画ID<br>
+-- return 动画
+-- @function [parent=#FxUnitManager] fetchAnimate 
+-- @param self
+-- @param #unsigned int animateId
+-- @return FxAnimate#FxAnimate ret (return value: flashx.FxAnimate)
+        
+--------------------------------
 -- 停止时间轴
 -- @function [parent=#FxUnitManager] pauseTimeline 
 -- @param self
@@ -55,5 +72,11 @@
 -- @function [parent=#FxUnitManager] getFPS 
 -- @param self
 -- @return unsigned char#unsigned char ret (return value: unsigned char)
+        
+--------------------------------
+-- 
+-- @function [parent=#FxUnitManager] create 
+-- @param self
+-- @return FxUnitManager#FxUnitManager ret (return value: flashx.FxUnitManager)
         
 return nil

@@ -5,29 +5,29 @@
 
 NS_FLASHX_BEGIN
 
+class FxUnitManager;
+
 class FxUnit
 {
 public:
-	FxUnit();
-	virtual ~FxUnit();
-
-    const bool isDead() const {
-        return _dead;
-    }
+    friend FxUnitManager;
     
-    const bool isPaused() const {
-        return _paused;
-    }
-    
-    void suicide();
+    const bool isDead() const {return _dead;}
+    void fxKill();
+    const bool fxIsPaused() const {return _paused;}
+    virtual void fxPause();
     virtual void play();
     virtual void stop();
-    virtual void pauseEff();
-    virtual void onTick() = 0;
     
     virtual void retain() = 0;
     virtual void release() = 0;
     virtual u32  getReferenceCount() const = 0;
+    
+protected:
+    FxUnit();
+    virtual ~FxUnit();
+    virtual void onTick() = 0;
+    
 private:
     bool _dead, _paused;
 };

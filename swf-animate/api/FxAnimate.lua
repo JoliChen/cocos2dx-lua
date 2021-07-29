@@ -6,13 +6,63 @@
 
 --------------------------------
 -- 
--- @function [parent=#FxAnimate] getArtManager 
+-- @function [parent=#FxAnimate] fxKill 
 -- @param self
--- @return FxArtManager#FxArtManager ret (return value: flashx.FxArtManager)
+-- @return FxAnimate#FxAnimate self (return value: flashx.FxAnimate)
         
 --------------------------------
 -- 
--- @function [parent=#FxAnimate] delScriptEnterFrameHandler 
+-- @function [parent=#FxAnimate] getCurrentFrame 
+-- @param self
+-- @return unsigned short#unsigned short ret (return value: unsigned short)
+        
+--------------------------------
+-- 
+-- @function [parent=#FxAnimate] play 
+-- @param self
+-- @return FxAnimate#FxAnimate self (return value: flashx.FxAnimate)
+        
+--------------------------------
+-- 
+-- @function [parent=#FxAnimate] delAllScriptEnterFrameHandlers 
+-- @param self
+-- @return FxAnimate#FxAnimate self (return value: flashx.FxAnimate)
+        
+--------------------------------
+-- 
+-- @function [parent=#FxAnimate] hasScriptFrameEndedHandler 
+-- @param self
+-- @return bool#bool ret (return value: bool)
+        
+--------------------------------
+-- 
+-- @function [parent=#FxAnimate] isCircle 
+-- @param self
+-- @return bool#bool ret (return value: bool)
+        
+--------------------------------
+-- 
+-- @function [parent=#FxAnimate] fxIsPaused 
+-- @param self
+-- @return bool#bool ret (return value: bool)
+        
+--------------------------------
+-- 初始化<br>
+-- param animateId 动画ID
+-- @function [parent=#FxAnimate] initWithID 
+-- @param self
+-- @param #unsigned int animateId
+-- @return bool#bool ret (return value: bool)
+        
+--------------------------------
+-- 
+-- @function [parent=#FxAnimate] stop 
+-- @param self
+-- @return FxAnimate#FxAnimate self (return value: flashx.FxAnimate)
+        
+--------------------------------
+-- 
+-- @function [parent=#FxAnimate] hasScriptEnterFrameHandler 
 -- @param self
 -- @param #unsigned short frame
 -- @param #int handler
@@ -23,6 +73,31 @@
 -- @function [parent=#FxAnimate] setScriptFrameEndedHandler 
 -- @param self
 -- @return FxAnimate#FxAnimate self (return value: flashx.FxAnimate)
+        
+--------------------------------
+-- 
+-- @function [parent=#FxAnimate] fxPause 
+-- @param self
+-- @return FxAnimate#FxAnimate self (return value: flashx.FxAnimate)
+        
+--------------------------------
+-- 
+-- @function [parent=#FxAnimate] gotoAndPlay 
+-- @param self
+-- @param #unsigned short frame
+-- @return FxAnimate#FxAnimate self (return value: flashx.FxAnimate)
+        
+--------------------------------
+-- 
+-- @function [parent=#FxAnimate] getTotalFrames 
+-- @param self
+-- @return unsigned short#unsigned short ret (return value: unsigned short)
+        
+--------------------------------
+-- 
+-- @function [parent=#FxAnimate] isDead 
+-- @param self
+-- @return bool#bool ret (return value: bool)
         
 --------------------------------
 -- 
@@ -39,98 +114,10 @@
         
 --------------------------------
 -- 
--- @function [parent=#FxAnimate] gotoAndStop 
--- @param self
--- @param #unsigned short frame
--- @return FxAnimate#FxAnimate self (return value: flashx.FxAnimate)
-        
---------------------------------
--- 
--- @function [parent=#FxAnimate] getCurrentFrame 
--- @param self
--- @return unsigned short#unsigned short ret (return value: unsigned short)
-        
---------------------------------
--- 
--- @function [parent=#FxAnimate] suicide 
--- @param self
--- @return FxAnimate#FxAnimate self (return value: flashx.FxAnimate)
-        
---------------------------------
--- 
--- @function [parent=#FxAnimate] pauseEff 
--- @param self
--- @return FxAnimate#FxAnimate self (return value: flashx.FxAnimate)
-        
---------------------------------
--- 
--- @function [parent=#FxAnimate] hasScriptFrameEndedHandler 
--- @param self
--- @return bool#bool ret (return value: bool)
-        
---------------------------------
--- 初始化<br>
--- param animateId 动画ID
--- @function [parent=#FxAnimate] initWithID 
--- @param self
--- @param #unsigned int animateId
--- @return bool#bool ret (return value: bool)
-        
---------------------------------
--- 
--- @function [parent=#FxAnimate] isDead 
--- @param self
--- @return bool#bool ret (return value: bool)
-        
---------------------------------
--- 
--- @function [parent=#FxAnimate] play 
--- @param self
--- @return FxAnimate#FxAnimate self (return value: flashx.FxAnimate)
-        
---------------------------------
--- 
--- @function [parent=#FxAnimate] stop 
--- @param self
--- @return FxAnimate#FxAnimate self (return value: flashx.FxAnimate)
-        
---------------------------------
--- 
--- @function [parent=#FxAnimate] delAllScriptEnterFrameHandlers 
--- @param self
--- @return FxAnimate#FxAnimate self (return value: flashx.FxAnimate)
-        
---------------------------------
--- 
--- @function [parent=#FxAnimate] getTotalFrames 
--- @param self
--- @return unsigned short#unsigned short ret (return value: unsigned short)
-        
---------------------------------
--- 
--- @function [parent=#FxAnimate] hasScriptEnterFrameHandler 
+-- @function [parent=#FxAnimate] delScriptEnterFrameHandler 
 -- @param self
 -- @param #unsigned short frame
 -- @param #int handler
--- @return bool#bool ret (return value: bool)
-        
---------------------------------
--- 
--- @function [parent=#FxAnimate] isCircle 
--- @param self
--- @return bool#bool ret (return value: bool)
-        
---------------------------------
--- 
--- @function [parent=#FxAnimate] gotoAndPlay 
--- @param self
--- @param #unsigned short frame
--- @return FxAnimate#FxAnimate self (return value: flashx.FxAnimate)
-        
---------------------------------
--- 
--- @function [parent=#FxAnimate] isPaused 
--- @param self
 -- @return bool#bool ret (return value: bool)
         
 --------------------------------
@@ -143,7 +130,14 @@
         
 --------------------------------
 -- 
--- @function [parent=#FxAnimate] removeFromParent 
+-- @function [parent=#FxAnimate] gotoAndStop 
+-- @param self
+-- @param #unsigned short frame
+-- @return FxAnimate#FxAnimate self (return value: flashx.FxAnimate)
+        
+--------------------------------
+-- 
+-- @function [parent=#FxAnimate] release 
 -- @param self
 -- @return FxAnimate#FxAnimate self (return value: flashx.FxAnimate)
         
@@ -161,14 +155,9 @@
         
 --------------------------------
 -- 
--- @function [parent=#FxAnimate] release 
+-- @function [parent=#FxAnimate] removeFromParentAndCleanup 
 -- @param self
--- @return FxAnimate#FxAnimate self (return value: flashx.FxAnimate)
-        
---------------------------------
--- 
--- @function [parent=#FxAnimate] FxAnimate 
--- @param self
+-- @param #bool cleanup
 -- @return FxAnimate#FxAnimate self (return value: flashx.FxAnimate)
         
 return nil

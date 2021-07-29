@@ -8,9 +8,10 @@ FxUnit::FxUnit():_dead(false), _paused(true)
 
 FxUnit::~FxUnit()
 {
+//    FXLOG("FxUnit::dtor()");
 }
 
-void FxUnit::suicide()
+void FxUnit::fxKill()
 {
     _dead = true;
     stop();
@@ -26,7 +27,7 @@ void FxUnit::stop()
     _paused = true;
 }
 
-void FxUnit::pauseEff()
+void FxUnit::fxPause()
 {
     _paused = true;
 }

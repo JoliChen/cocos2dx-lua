@@ -15,24 +15,27 @@ USING_NS_CC;
 
 NS_FLASHX_BEGIN
 
+class FxUnitManager;
+
 /**
  * 动画心跳单元
  */
 class FxTicker : public FxUnit, public Ref {
-    
 public:
-    FxTicker();
-    virtual ~FxTicker();
+    friend FxUnitManager;
     
 #if FX_USING_SCRIPT
     void setScriptTickHandler(FX_SCRIPT_FUNCTION scriptHandler = FX_SCRIPT_NONE_FUN);
 #endif
-
-    virtual void onTick();
     
-    void retain() { Ref::retain(); };
-    void release() { Ref::release(); };
-    u32 getReferenceCount() const { return Ref::getReferenceCount(); }
+    void retain() override { Ref::retain(); };
+    void release() override { Ref::release(); };
+    u32 getReferenceCount() const override { return Ref::getReferenceCount(); }
+    
+protected:
+    FxTicker();
+    virtual ~FxTicker();
+    virtual void onTick() override;
     
 private:
 #if FX_USING_SCRIPT

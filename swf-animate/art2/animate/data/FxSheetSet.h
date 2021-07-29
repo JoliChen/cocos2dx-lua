@@ -29,7 +29,7 @@ public:
     
 private:
     u8 _size;
-    const u32 *_sheets;
+    u32 *_sheets;
 };
 
 NS_FLASHX_END /* NS_FLASHX_BEGIN */

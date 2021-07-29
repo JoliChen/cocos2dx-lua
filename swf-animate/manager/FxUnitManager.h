@@ -10,16 +10,18 @@
 
 #include "flashx/basic/FxVector.h"
 #include "flashx/element/FxTicker.h"
+#include "flashx/art2/animate/FxAsyncAnimate.h"
 
 NS_FLASHX_BEGIN
 
 class FxTimeline;
+typedef struct _unitnode UnitNode;
 
-class FxUnitManager {
+class FxUnitManager : public Ref {
 public:
+    static FxUnitManager* create();
     
 #pragma-mark - timeline
-    
     friend FxTimeline;
     
     /**
@@ -49,54 +51,77 @@ public:
      * 构造心跳单元
      * @return 心跳单元
      */
-    FxUnit* newTicker();
+    FxTicker* fetchTicker();
+    
+    /**
+     * 构建动画
+     * @param animateId 动画ID
+     * @return 动画
+     */
+    FxAnimate* fetchAnimate(const u32& animateId);
+    
+    /**
+     * 构建异步动画
+     * @param animateId 动画ID
+     * @param handler 动画资源加载回调
+     */
+    FxAsyncAnimate* fetchAsyncAnimate(const u32& animateId, const FxAnimateLoadHandler& handler = nullptr);
+    
+    /**
+     * 移除单元
+     * @param unit 单元对象
+     */
+    void removeUnit(FxUnit *unit);
     
     /**
      * 计算心跳单元数量
      * @return 心跳单元数量
      */
-    u16 numUnits() const { return _unitslist.size(); }
-    
-    /**
-     * 回收心跳单元
-     */
-    void delUnit(FxUnit* unit);
-    
-    /**
-     * 垃圾回收
-     */
-    void gc();
-
-protected:
-    
-    FxUnitManager();
-    virtual ~FxUnitManager();
-    
-    /**
-     * 执行GC逻辑
-     */
-    virtual void onExecuteGC() = 0;
-    
-    /**
-     * 将动画单元添加到末尾
-     */
-    void pushUnit(FxUnit *unit)  { _unitslist.pushBack(unit); }
+    u16 numUnits() const { return _count; }
     
     /**
      * 移除未使用的单元
      */
     void removeUnusedUnits();
     
+    /**
+     * 垃圾回收
+     */
+    void gc();
+    
 private:
+    FxUnitManager();
+    virtual ~FxUnitManager();
+
     /**
      * 心跳
      */
     void __tick__();
+        
+    /**
+     * 添加节点
+     * @param unit 单元对象
+     */
+    void appendNodeWithUnit(FxUnit *unit);
     
+    /**
+     * 删除节点
+     * @param node 节点对象
+     * @return 下一个节点
+     */
+    UnitNode* removeNode(UnitNode *node);
+    
+    /**
+     * 查找节点
+     * @param unit 单元对象
+     * @return 节点对象
+     */
+    UnitNode* findNode(FxUnit *unit);
+        
     u8 _fps;
-    bool _isTimetoGC;
-    FxTimeline* _timeline;
-    FxVector<FxUnit*> _unitslist;
+    FxTimeline *_timeline;
+    UnitNode *_head, *_tail, *_curr, *_next;
+    u16 _count;
 };
 
 NS_FLASHX_END /* NS_FLASHX_BEGIN */

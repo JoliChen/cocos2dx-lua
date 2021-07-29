@@ -10,7 +10,9 @@
 
 NS_FLASHX_BEGIN
 
-FxSheetSet::FxSheetSet():_size(0), _sheets(nullptr)
+FxSheetSet::FxSheetSet()
+:_size(0)
+,_sheets(nullptr)
 {
 }
 
@@ -21,12 +23,11 @@ FxSheetSet::~FxSheetSet()
 
 void FxSheetSet::parse(FxByteArray *buffer, const u8& size)
 {
-    u32 *sheets = new u32[size];
-    for (u8 i=0; i<size; ++i) {
-        sheets[i] = buffer->readUnsignedInt();
-    }
     _size = size;
-    _sheets = sheets;
+    _sheets = new u32[size];
+    for (u8 i=0; i<size; ++i) {
+        _sheets[i] = buffer->readUnsignedInt();
+    }
 }
 
 NS_FLASHX_END /* NS_FLASHX_BEGIN */

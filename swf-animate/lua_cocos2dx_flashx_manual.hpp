@@ -14,16 +14,4 @@ extern "C" {
 int register_all_cocos2dx_flashx_manual(lua_State* tolua_S);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 #endif // __cocos2dx_flashx_manual_h__

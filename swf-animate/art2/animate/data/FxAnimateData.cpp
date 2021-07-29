@@ -9,7 +9,12 @@
 
 NS_FLASHX_BEGIN
 
-FxAnimateData::FxAnimateData():_frames(nullptr),_elements(nullptr),_colorFilters(nullptr),_groupSheets(nullptr),_atlasSheets(nullptr)
+FxAnimateData::FxAnimateData()
+:_frames(nullptr)
+,_elements(nullptr)
+,_colorFilters(nullptr)
+,_groupSheets(nullptr)
+,_atlasSheets(nullptr)
 {
 }
 
@@ -39,6 +44,7 @@ FxAnimateData::~FxAnimateData()
 
 void FxAnimateData::parse(FxByteArray *buffer)
 {
+    _animateId = buffer->readUnsignedInt();
     _framesLength = buffer->readShort();
     _frames = new FxAnimateFrameData*[_framesLength];
     for (u16 i=0; i<_framesLength; ++i) {

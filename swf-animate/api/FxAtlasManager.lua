@@ -11,6 +11,18 @@
 -- @return unsigned short#unsigned short ret (return value: unsigned short)
         
 --------------------------------
+-- 删除未使用的图集
+-- @function [parent=#FxAtlasManager] removeUnsuedAtlas 
+-- @param self
+-- @return FxAtlasManager#FxAtlasManager self (return value: flashx.FxAtlasManager)
+        
+--------------------------------
+-- 删除所有缓存的图集
+-- @function [parent=#FxAtlasManager] clear 
+-- @param self
+-- @return FxAtlasManager#FxAtlasManager self (return value: flashx.FxAtlasManager)
+        
+--------------------------------
 -- 载入图集纹理<br>
 -- param plistPath 图集配置路径<br>
 -- param callback 回调
@@ -52,6 +64,14 @@
 -- @return Texture2D#Texture2D ret (return value: cc.Texture2D)
         
 --------------------------------
+-- 归还资源集<br>
+-- param atlasArray 引用的动画资源表
+-- @function [parent=#FxAtlasManager] releaseMuiltAtlas 
+-- @param self
+-- @param #array_table atlasArray
+-- @return FxAtlasManager#FxAtlasManager self (return value: flashx.FxAtlasManager)
+        
+--------------------------------
 -- 是否已载入图集<br>
 -- param plistPath 图集配置路径<br>
 -- return atlas
@@ -59,5 +79,11 @@
 -- @param self
 -- @param #string plistPath
 -- @return bool#bool ret (return value: bool)
+        
+--------------------------------
+-- 
+-- @function [parent=#FxAtlasManager] getInstance 
+-- @param self
+-- @return FxAtlasManager#FxAtlasManager ret (return value: flashx.FxAtlasManager)
         
 return nil

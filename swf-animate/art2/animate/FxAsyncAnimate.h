@@ -15,18 +15,30 @@ NS_FLASHX_BEGIN
 
 class FxAsyncAnimate;
 class FxMultloader;
+class FxUnitManager;
 
 typedef std::function<void(FxAsyncAnimate*, bool)> FxAnimateLoadHandler;
 
 class FxAsyncAnimate : public FxAnimate, public FxLoaderProtocol {
-    
 public:
-    FxAsyncAnimate();
-    virtual ~FxAsyncAnimate();
+    friend FxUnitManager;
     
     bool initWithLoader(const u32& animateId, const FxAnimateLoadHandler& callback = nullptr);
     void stop() override;
-    void loadFinish(const bool& isOk) override;
+    void onLoadFinish(const bool& isOk) override;
+    
+protected:
+    FxAsyncAnimate();
+    virtual ~FxAsyncAnimate();
+    
+#if FX_USING_SCRIPT
+    /**
+     * push self to lua stack
+     * @param stack lua stack
+     */
+    void pushSelfToStack(LuaStack *stack) override { stack->pushObject(this, "FxAsyncAnimate"); }
+#endif
+    
 private:
     FxMultloader *_resLoader;
     FxAnimateLoadHandler _loadHandler;

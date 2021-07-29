@@ -36,6 +36,40 @@ FxAtlasManager::FxAtlasManager() {}
 
 FxAtlasManager::~FxAtlasManager() {}
 
+void FxAtlasManager::clear()
+{
+    SpriteFrameCache *sfc = insSpFrameCache();
+    TextureCache *txc = insTextureCache();
+    for(auto it=atlasMap.begin(); it!=atlasMap.end();) {
+        sfc->removeSpriteFramesFromFile(it->first);// remove spframes
+        txc->removeTextureForKey(getImagePath(it->first));// remove texture
+        atlasMap.erase(it++);
+    }
+}
+
+void FxAtlasManager::removeUnsuedAtlas()
+{
+#ifdef FX_DEBUG
+    FXLOG("removeUnsuedAtlas preCount:%u", this->numAtlas());
+#endif
+    std::vector<fxstr> removes;
+    forit(atlasMap, altasItr) {
+        if (altasItr->second->getReferenceCount() == 1) {
+            removes.push_back(altasItr->first);
+        }
+    }
+    SpriteFrameCache *sfc = insSpFrameCache();
+    TextureCache *txc = insTextureCache();
+    for(const auto &plistPath : removes) {
+        sfc->removeSpriteFramesFromFile(plistPath);// remove spframes
+        txc->removeTextureForKey(getImagePath(plistPath));// remove texture
+        atlasMap.erase(plistPath);
+    }
+#ifdef FX_DEBUG
+    FXLOG("removeUnsuedAtlas endCount:%u", this->numAtlas());
+#endif
+}
+
 bool FxAtlasManager::retainAtlas(const fxstr& plistPath, Texture2D* texture /* nullptr */)
 {
     auto atlasIter = atlasMap.find(plistPath);
@@ -58,41 +92,6 @@ bool FxAtlasManager::retainAtlas(const fxstr& plistPath, Texture2D* texture /* n
     }
     FXLOG("%s load texture failed:%s", __func__, plistPath.c_str());
     return false;
-}
-
-void FxAtlasManager::releaseAtlas(const fxstr& plistPath)
-{
-    auto atlasIter = atlasMap.find(plistPath);
-    if (atlasMap.end() == atlasIter) {
-        return;
-    }
-    FxAtlasItem *atlasItem = atlasIter->second;
-    if (atlasItem) {
-        //FXLOG("%s:%s", __func__, plistPath.c_str());
-        atlasItem->release();
-    }
-}
-
-void FxAtlasManager::removeUnsuedAtlas()
-{
-    std::vector<fxstr> removes;
-    forit(atlasMap, altasItr) {
-        if (altasItr->second->getReferenceCount() == 1) {
-            removes.push_back(altasItr->first);
-        }
-    }
-    
-    for(const auto &plistPath : removes) {
-        atlasMap.erase(plistPath);
-        insSpFrameCache()->removeSpriteFramesFromFile(plistPath);// remove spframes
-        insTextureCache()->removeTextureForKey(getImagePath(plistPath));// remove texture
-    }
-    
-//    atlasMap.erase(removes);
-//    insSpFrameCache()->removeUnusedSpriteFrames();
-//    insTextureCache()->removeUnusedTextures();
-    
-    // FXLOG("%s:%lu", __func__, removes.size());
 }
 
 FxAtlasItem* FxAtlasManager::putAtlas(const fxstr& plistPath, Texture2D* texture)
@@ -119,6 +118,27 @@ FxAtlasItem* FxAtlasManager::putAtlas(const fxstr& plistPath, Texture2D* texture
     FX_SAFE_DELETE(atlasItem);
     return nullptr;
 }
+
+void FxAtlasManager::releaseAtlas(const fxstr& plistPath)
+{
+    auto atlasIter = atlasMap.find(plistPath);
+    if (atlasMap.end() == atlasIter) {
+        return;
+    }
+    FxAtlasItem *atlasItem = atlasIter->second;
+    if (atlasItem) {
+        //FXLOG("%s:%s", __func__, plistPath.c_str());
+        atlasItem->release();
+    }
+}
+
+void FxAtlasManager::releaseMuiltAtlas(FxStrArray& atlasArray)
+{
+    forit(atlasArray, atlas) {
+        this->releaseAtlas(*atlas);
+    }
+}
+
 
 void FxAtlasManager::loadAtlasTexture(const fxstr& plistPath, const loadTexHandler& callback)
 {

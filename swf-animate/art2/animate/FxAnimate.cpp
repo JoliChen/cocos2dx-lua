@@ -4,25 +4,26 @@
 //  Created by joli on 2018/8/17.
 //  Copyright ? 2018?? uzone. All rights reserved.
 //
-
 #include "flashx/art2/animate/FxAnimate.h"
-#include "flashx/art2/manager/FxArtManager.h"
-#include "flashx/art2/manager/FxDataManager.h"
+#include "flashx/manager/FxAtlasManager.h"
 
 NS_FLASHX_BEGIN
 
-FxAnimate::FxAnimate():art2Manager(nullptr), animateData(nullptr) {}
+FxAnimate::FxAnimate():animateData(nullptr)
+{
+    dataManager = FxDataManager::getInstance();
+}
 
 FxAnimate::~FxAnimate()
 {
     cleanupAnimate();
-    art2Manager = nullptr;
+    dataManager = nullptr;
 }
 
 void FxAnimate::cleanupAnimate()
 {
     if (!animateRes.empty()) {
-        art2Manager->releaseAtlasSet(animateRes);
+        FxAtlasManager::getInstance()->releaseMuiltAtlas(animateRes);
         animateRes.clear();
     }
     if (!particleMap.empty()) {
@@ -36,15 +37,17 @@ void FxAnimate::cleanupAnimate()
     animateData = nullptr;
 }
 
-void FxAnimate::removeFromParent()
+void FxAnimate::removeFromParentAndCleanup(bool cleanup)
 {
-    Node::removeFromParent();
-    this->suicide();
+    Node::removeFromParentAndCleanup(cleanup);
+    if (cleanup) {
+        this->fxKill();
+    }
 }
 
 bool FxAnimate::initWithID(const u32& animateId)
 {
-    const FxAnimateData* animateData = FxDataManager::getInstance()->getAnimateData(animateId);
+    const FxAnimateData* animateData = dataManager->getAnimateData(animateId);
     if (!animateData) {
         return false;
     }
@@ -54,7 +57,7 @@ bool FxAnimate::initWithID(const u32& animateId)
 bool FxAnimate::initWithAnimateData(const FxAnimateData* animateData)
 {
     cleanupAnimate();
-    if (!art2Manager->retainAnimateRes(animateData, animateRes)) {
+    if (!dataManager->retainAnimateAtlases(animateData, animateRes)) {
         return false;
     }
     this->animateData = animateData;
@@ -95,7 +98,7 @@ void FxAnimate::frameMotionTick(const u16& frame, const FxAnimateMotionData* mot
     }
     
     const FxAnimateElementData* elemData = animateData->getElement(elemId);
-    const FxSheetData* sheetData = FxDataManager::getInstance()->getSheetData(elemData->getSheetId());
+    const FxSheetData* sheetData = dataManager->getSheetData(elemData->getSheetId());
     if (!sheetData) {
         FXLOG("create particle fialed, can not found SheetData:%u.", elemData->getSheetId());
         return;

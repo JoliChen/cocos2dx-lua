@@ -50,33 +50,22 @@ public:
  */
 class FxFBF : public FxUnit {
 public:
+    /**
+     * 是否循环播放
+     */
+    void setCircle(const bool& circle) {_isCircle = circle;}
+    const bool& isCircle() const {return _isCircle;}
     
-    FxFBF();
-    virtual ~FxFBF();
-    
-    const bool& isCircle() const {
-        return _isCircle;
-    }
-    void setCircle(const bool& circle) {
-        _isCircle = circle;
-    }
-    
-    const u16& getTotalFrames() const {
-        return _totalFrames;
-    }
+    /**
+     * 总帧数
+     */
+    const u16& getTotalFrames() const {return _totalFrames;}
 
     /**
-     * 当前帧索引，范围:[0, totalFrames-1]。
+     * 当前帧索引 [0, totalFrames-1]
      * @return u16
      */
-    const u16& getCurrentFrame() const {
-        return _currentFrame;
-    }
-
-    /**
-     * 心跳
-     */
-    void onTick() override;
+    const u16& getCurrentFrame() const {return _currentFrame;}
     
     /**
      * 跳到指定帧开始播放
@@ -91,7 +80,6 @@ public:
     void gotoAndStop(const u16& frame);
     
 #if FX_USING_SCRIPT
-    
     /**
      * 是否注册进帧事件
      * @param frame   帧索引
@@ -123,9 +111,7 @@ public:
      * 是否注册播放完毕事件
      * @return 注册
      */
-    bool hasScriptFrameEndedHandler() const {
-        return FxIsScriptFunction(_scriptFrameEndedHandler);
-    }
+    bool hasScriptFrameEndedHandler() const {return FxIsScriptFunction(_scriptFrameEndedHandler);}
     
     /**
      * 注册播放完毕事件
@@ -133,19 +119,15 @@ public:
      * @param handler 进帧回调
      */
     void setScriptFrameEndedHandler(const FX_SCRIPT_FUNCTION& handler = FX_SCRIPT_NONE_FUN);
-    
 #endif /* FX_USING_SCRIPT */
     
 #if FX_USING_CPP
-    
     /**
      * 是否注册进帧事件
      * @param frame 帧索引
      * @return 是否注册
      */
-    bool hasCppEnterFrameHandler(const u16& frame) const {
-        return _cppEnterFrameRegMap.find(frame) != _cppEnterFrameRegMap.end();
-    }
+    bool hasCppEnterFrameHandler(const u16& frame) const {return _cppEnterFrameRegMap.find(frame) != _cppEnterFrameRegMap.end();}
     
     /**
      * 注册进帧事件
@@ -169,9 +151,7 @@ public:
      * 是否注册播放完毕事件
      * @return 是否注册
      */
-    bool hasCppFrameEndedHandler() const {
-        return nullptr != _cppFrameEndedDelegate;
-    }
+    bool hasCppFrameEndedHandler() const {return nullptr != _cppFrameEndedDelegate;}
     
     /**
      * 注册播放完毕事件
@@ -181,20 +161,20 @@ public:
 #endif /* FX_USING_CPP */
     
 protected:
-    /**
-     * 逐帧动画是否可以进行渲染
-     */
-    inline bool canRender() const {
-        return _totalFrames > 0;
-    }
+    FxFBF();
+    virtual ~FxFBF();
     
+    /**
+     * 心跳
+     */
+    void onTick() override;
+        
 #if FX_USING_SCRIPT
     /**
-     * 将自身压人脚本栈
-     * @param stack 脚本栈
-     * @param typeName 脚本l对象类型名称
+     * push self to lua stack
+     * @param stack lua stack
      */
-    virtual void pushSelfToStack(LuaStack *stack, const char* typeName) = 0;
+    virtual void pushSelfToStack(LuaStack *stack) = 0;
 #endif /* FX_USING_SCRIPT */
     
     /**
@@ -211,7 +191,6 @@ protected:
     virtual void onRenderFrame(const u16& frame) {};
     
 private:
-    
     /**
      * 进帧事件
      */

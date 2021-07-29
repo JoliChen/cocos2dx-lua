@@ -18,6 +18,7 @@
 #define FX_DELETE_ARRAY(p)      do { delete[] (p); (p) = nullptr; } while(0)
 #define FX_SAFE_DELETE(p)       if (p) { FX_DELETE(p); }
 #define FX_SAFE_DELETE_ARRAY(p) if (p) { FX_DELETE_ARRAY(p); }
+#define FX_SAFE_FREE(p)         do { if(p) { free(p); (p) = nullptr; } } while(0)
 
 #define NS_FLASHX_BEGIN     namespace flashx {
 #define NS_FLASHX_END       }

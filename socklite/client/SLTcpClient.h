@@ -21,21 +21,17 @@ class SLTcpClient : public Ref, public SLTcpDelegate {
 public:
 	static SLTcpClient* create();
 
-	void setEventListener(LUA_FUNCTION listener) { eventListener = listener; };
-    bool isSocketConnect() { return tcpSession->isSocketConnect(); }
-
-    /**
-     * 主线程心跳
-     * @param dt 单位时间
-     */
-    void update(const f32& dt);
+    void setEventListener(LUA_FUNCTION listener) { _scriptFunc = listener; };
+    
+    SLConnState getSocketState() const { return _session->getConnectState(); }
+    bool isSocketConnect() const { return _session->getConnectState() == SLConnState::CONNED; }
     
     /**
      * 连接
      * @param host 主机地址
      * @param port 主机端口
      */
-    void connect(const char *host, u16 port);
+    void connect(const char *host, u16 port) { _session->connect(host, port); }
     
     /**
      * 断开连接
@@ -48,6 +44,13 @@ public:
      * @param message 消息
      */
     void sendPacket(SLTcpPacket *message);
+    
+    /**
+     * 主线程心跳
+     * @param dt 单位时间
+     */
+    void update(const f32 &dt);
+    
     
     /*********************************************** SLTcpDelegate ***************************************************/
     /**
@@ -73,18 +76,19 @@ public:
     /**
      * 接收数据包
      * @param session TCP会话
-     * @param packet  数据包
+     * @param buf 数据流
+     * @param len 长度
      */
-    void onRecvPacket(SLTcpSession *session, SLTcpRecvPacket* packet) override;
+    void onRecvPacket(SLTcpSession *session, const packet_byte *buf, const packet_size &len) override;
     /************************************************* SLTcpDelegate *************************************************/
 
 private:
     SLTcpClient();
     virtual ~SLTcpClient();
     
-    LUA_FUNCTION eventListener;
-    SLTcpSession *tcpSession;
-    bool isConnecting;
+    LUA_FUNCTION _scriptFunc;
+    SLTcpSession *_session;
+    SLTcpPacket *_packetInst;
 };
 
 NS_SOCKLITE_END /* NS_SOCKLITE_BEGIN */

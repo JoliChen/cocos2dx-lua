@@ -42,25 +42,28 @@ ByteEndian FxByteArray::getEndianOfCPU() {
     return (*((u8 *) & thenumber) == 0xaa) ? ENDIAN_BIG : ENDIAN_LITTLE;
 }
 
-FxByteArray::FxByteArray(const fxb_t& len):_pos(0), _endian(ENDIAN_LITTLE)
+FxByteArray::FxByteArray(const fxb_t& len)
+:_pos(0)
+,_endian(ENDIAN_LITTLE)
+,_length(len)
+,_isOwnBuffer(true)
 {
-    _buffer = new byte[len];
-    _length = len;
-    _flag = 0;
+    _buffer = (byte*)malloc(len);
 }
 
-FxByteArray::FxByteArray(byte* buffer, const fxb_t &len, const byte &flag):_pos(0), _endian(ENDIAN_LITTLE)
+FxByteArray::FxByteArray(byte* buffer, const fxb_t &len, bool isOwnBuffer/*false*/)
+:_pos(0)
+,_endian(ENDIAN_LITTLE)
+,_buffer(buffer)
+,_length(len)
+,_isOwnBuffer(isOwnBuffer)
 {
-    _buffer = buffer;
-    _length = len;
-    _flag = flag;
 }
 
 FxByteArray::~FxByteArray()
 {
-    if (0 == _flag) {
-        FX_SAFE_DELETE_ARRAY(_buffer);
-        _flag = -1;
+    if (_isOwnBuffer) {
+        FX_SAFE_FREE(_buffer);
     }
 }
 
@@ -163,12 +166,11 @@ void FxByteArray::writeUnsignedByte(u8 value)
 
 fxstr FxByteArray::readString(fxb_t len)
 {
-    byte* buf = new byte[len + 1];
+    byte* buf = (byte*)malloc(len + 1);
     buf[len] = '\0';
     read(buf, len);
-    
     fxstr ret(buf);
-    FX_DELETE_ARRAY(buf);
+    FX_SAFE_FREE(buf);
     return ret;
 }
 void FxByteArray::writeString(fxstr value)
@@ -184,7 +186,7 @@ bool FxByteArray::read(void* data, const fxb_t& len)
     }
     switch (_endian) {
         case ENDIAN_LITTLE:
-            memcpy(data, _buffer + _pos, len);
+            memmove(data, _buffer + _pos, len);
             break;
         case ENDIAN_BIG:
             read_endian_big(data, _buffer + _pos, len);
@@ -202,7 +204,7 @@ bool FxByteArray::write(const void* data, const fxb_t& len)
     }
     switch (_endian) {
         case ENDIAN_LITTLE:
-            memcpy(_buffer + _pos, data, len);
+            memmove(_buffer + _pos, data, len);
             break;
         case ENDIAN_BIG:
             write_endian_big(_buffer + _pos, data, len);

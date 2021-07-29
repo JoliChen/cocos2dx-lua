@@ -9,7 +9,9 @@
 
 NS_FLASHX_BEGIN
 
-FxAnimateElementData::FxAnimateElementData():_changeKeys(nullptr), _birthAttrs(nullptr)
+FxAnimateElementData::FxAnimateElementData()
+:_changeKeys(nullptr)
+,_birthAttrs(nullptr)
 {
 }
 

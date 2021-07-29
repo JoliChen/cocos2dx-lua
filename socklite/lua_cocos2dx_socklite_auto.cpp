@@ -5,375 +5,6 @@
 #include "scripting/lua-bindings/manual/tolua_fix.h"
 #include "scripting/lua-bindings/manual/LuaBasicConversions.h"
 
-int lua_cocos2dx_socklite_SLTcpSession_mainThreadTick(lua_State* tolua_S)
-{
-    int argc = 0;
-    socklite::SLTcpSession* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"socklite.SLTcpSession",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (socklite::SLTcpSession*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_socklite_SLTcpSession_mainThreadTick'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 1) 
-    {
-        double arg0;
-
-        ok &= luaval_to_number(tolua_S, 2,&arg0, "socklite.SLTcpSession:mainThreadTick");
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_socklite_SLTcpSession_mainThreadTick'", nullptr);
-            return 0;
-        }
-        cobj->mainThreadTick(arg0);
-        lua_settop(tolua_S, 1);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "socklite.SLTcpSession:mainThreadTick",argc, 1);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_socklite_SLTcpSession_mainThreadTick'.",&tolua_err);
-#endif
-
-    return 0;
-}
-int lua_cocos2dx_socklite_SLTcpSession_connect(lua_State* tolua_S)
-{
-    int argc = 0;
-    socklite::SLTcpSession* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"socklite.SLTcpSession",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (socklite::SLTcpSession*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_socklite_SLTcpSession_connect'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 2) 
-    {
-        const char* arg0;
-        unsigned short arg1;
-
-        std::string arg0_tmp; ok &= luaval_to_std_string(tolua_S, 2, &arg0_tmp, "socklite.SLTcpSession:connect"); arg0 = (char*)arg0_tmp.c_str();
-
-        ok &= luaval_to_ushort(tolua_S, 3, &arg1, "socklite.SLTcpSession:connect");
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_socklite_SLTcpSession_connect'", nullptr);
-            return 0;
-        }
-        cobj->connect(arg0, arg1);
-        lua_settop(tolua_S, 1);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "socklite.SLTcpSession:connect",argc, 2);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_socklite_SLTcpSession_connect'.",&tolua_err);
-#endif
-
-    return 0;
-}
-int lua_cocos2dx_socklite_SLTcpSession_setDelegate(lua_State* tolua_S)
-{
-    int argc = 0;
-    socklite::SLTcpSession* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"socklite.SLTcpSession",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (socklite::SLTcpSession*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_socklite_SLTcpSession_setDelegate'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 1) 
-    {
-        socklite::SLTcpDelegate* arg0;
-
-        ok &= luaval_to_object<socklite::SLTcpDelegate>(tolua_S, 2, "socklite.SLTcpDelegate",&arg0, "socklite.SLTcpSession:setDelegate");
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_socklite_SLTcpSession_setDelegate'", nullptr);
-            return 0;
-        }
-        cobj->setDelegate(arg0);
-        lua_settop(tolua_S, 1);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "socklite.SLTcpSession:setDelegate",argc, 1);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_socklite_SLTcpSession_setDelegate'.",&tolua_err);
-#endif
-
-    return 0;
-}
-int lua_cocos2dx_socklite_SLTcpSession_isSocketConnect(lua_State* tolua_S)
-{
-    int argc = 0;
-    socklite::SLTcpSession* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"socklite.SLTcpSession",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (socklite::SLTcpSession*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_socklite_SLTcpSession_isSocketConnect'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_socklite_SLTcpSession_isSocketConnect'", nullptr);
-            return 0;
-        }
-        bool ret = cobj->isSocketConnect();
-        tolua_pushboolean(tolua_S,(bool)ret);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "socklite.SLTcpSession:isSocketConnect",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_socklite_SLTcpSession_isSocketConnect'.",&tolua_err);
-#endif
-
-    return 0;
-}
-int lua_cocos2dx_socklite_SLTcpSession_close(lua_State* tolua_S)
-{
-    int argc = 0;
-    socklite::SLTcpSession* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"socklite.SLTcpSession",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (socklite::SLTcpSession*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_socklite_SLTcpSession_close'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_socklite_SLTcpSession_close'", nullptr);
-            return 0;
-        }
-        cobj->close();
-        lua_settop(tolua_S, 1);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "socklite.SLTcpSession:close",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_socklite_SLTcpSession_close'.",&tolua_err);
-#endif
-
-    return 0;
-}
-int lua_cocos2dx_socklite_SLTcpSession_synchronizeClose(lua_State* tolua_S)
-{
-    int argc = 0;
-    socklite::SLTcpSession* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"socklite.SLTcpSession",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (socklite::SLTcpSession*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_socklite_SLTcpSession_synchronizeClose'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_socklite_SLTcpSession_synchronizeClose'", nullptr);
-            return 0;
-        }
-        cobj->synchronizeClose();
-        lua_settop(tolua_S, 1);
-        return 1;
-    }
-    if (argc == 1) 
-    {
-        bool arg0;
-
-        ok &= luaval_to_boolean(tolua_S, 2,&arg0, "socklite.SLTcpSession:synchronizeClose");
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_socklite_SLTcpSession_synchronizeClose'", nullptr);
-            return 0;
-        }
-        cobj->synchronizeClose(arg0);
-        lua_settop(tolua_S, 1);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "socklite.SLTcpSession:synchronizeClose",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_socklite_SLTcpSession_synchronizeClose'.",&tolua_err);
-#endif
-
-    return 0;
-}
-int lua_cocos2dx_socklite_SLTcpSession_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    socklite::SLTcpSession* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_socklite_SLTcpSession_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new socklite::SLTcpSession();
-        tolua_pushusertype(tolua_S,(void*)cobj,"socklite.SLTcpSession");
-        tolua_register_gc(tolua_S,lua_gettop(tolua_S));
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "socklite.SLTcpSession:SLTcpSession",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_socklite_SLTcpSession_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
-static int lua_cocos2dx_socklite_SLTcpSession_finalize(lua_State* tolua_S)
-{
-    printf("luabindings: finalizing LUA object (SLTcpSession)");
-    return 0;
-}
-
-int lua_register_cocos2dx_socklite_SLTcpSession(lua_State* tolua_S)
-{
-    tolua_usertype(tolua_S,"socklite.SLTcpSession");
-    tolua_cclass(tolua_S,"SLTcpSession","socklite.SLTcpSession","",nullptr);
-
-    tolua_beginmodule(tolua_S,"SLTcpSession");
-        tolua_function(tolua_S,"new",lua_cocos2dx_socklite_SLTcpSession_constructor);
-        tolua_function(tolua_S,"mainThreadTick",lua_cocos2dx_socklite_SLTcpSession_mainThreadTick);
-        tolua_function(tolua_S,"connect",lua_cocos2dx_socklite_SLTcpSession_connect);
-        tolua_function(tolua_S,"setDelegate",lua_cocos2dx_socklite_SLTcpSession_setDelegate);
-        tolua_function(tolua_S,"isSocketConnect",lua_cocos2dx_socklite_SLTcpSession_isSocketConnect);
-        tolua_function(tolua_S,"close",lua_cocos2dx_socklite_SLTcpSession_close);
-        tolua_function(tolua_S,"synchronizeClose",lua_cocos2dx_socklite_SLTcpSession_synchronizeClose);
-    tolua_endmodule(tolua_S);
-    std::string typeName = typeid(socklite::SLTcpSession).name();
-    g_luaType[typeName] = "socklite.SLTcpSession";
-    g_typeCast["SLTcpSession"] = "socklite.SLTcpSession";
-    return 1;
-}
-
 int lua_cocos2dx_socklite_SLTcpPacket_getCmd(lua_State* tolua_S)
 {
     int argc = 0;
@@ -1079,53 +710,6 @@ int lua_cocos2dx_socklite_SLTcpPacket_ReadU32(lua_State* tolua_S)
 
     return 0;
 }
-int lua_cocos2dx_socklite_SLTcpPacket_getPacketType(lua_State* tolua_S)
-{
-    int argc = 0;
-    socklite::SLTcpPacket* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"socklite.SLTcpPacket",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (socklite::SLTcpPacket*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_socklite_SLTcpPacket_getPacketType'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_socklite_SLTcpPacket_getPacketType'", nullptr);
-            return 0;
-        }
-        int ret = (int)cobj->getPacketType();
-        tolua_pushnumber(tolua_S,(lua_Number)ret);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "socklite.SLTcpPacket:getPacketType",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_socklite_SLTcpPacket_getPacketType'.",&tolua_err);
-#endif
-
-    return 0;
-}
 int lua_cocos2dx_socklite_SLTcpPacket_ReadS8(lua_State* tolua_S)
 {
     int argc = 0;
@@ -1169,6 +753,53 @@ int lua_cocos2dx_socklite_SLTcpPacket_ReadS8(lua_State* tolua_S)
 #if COCOS2D_DEBUG >= 1
     tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_socklite_SLTcpPacket_ReadS8'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_socklite_SLTcpPacket_getPacketType(lua_State* tolua_S)
+{
+    int argc = 0;
+    socklite::SLTcpPacket* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"socklite.SLTcpPacket",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (socklite::SLTcpPacket*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj)
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_socklite_SLTcpPacket_getPacketType'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0)
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_socklite_SLTcpPacket_getPacketType'", nullptr);
+            return 0;
+        }
+        int ret = (int)cobj->getPacketType();
+        tolua_pushnumber(tolua_S,(lua_Number)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "socklite.SLTcpPacket:getPacketType",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_socklite_SLTcpPacket_getPacketType'.",&tolua_err);
 #endif
 
     return 0;
@@ -1223,6 +854,155 @@ int lua_cocos2dx_socklite_SLTcpPacket_setPacketType(lua_State* tolua_S)
 
     return 0;
 }
+int lua_cocos2dx_socklite_SLTcpPacket_getCompressMinSize(lua_State* tolua_S)
+{
+    int argc = 0;
+    socklite::SLTcpPacket* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"socklite.SLTcpPacket",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (socklite::SLTcpPacket*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj)
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_socklite_SLTcpPacket_getCompressMinSize'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0)
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_socklite_SLTcpPacket_getCompressMinSize'", nullptr);
+            return 0;
+        }
+        int ret = cobj->getCompressMinSize();
+        tolua_pushnumber(tolua_S,(lua_Number)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "socklite.SLTcpPacket:getCompressMinSize",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_socklite_SLTcpPacket_getCompressMinSize'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_socklite_SLTcpPacket_setCompressMinSize(lua_State* tolua_S)
+{
+    int argc = 0;
+    socklite::SLTcpPacket* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"socklite.SLTcpPacket",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (socklite::SLTcpPacket*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj)
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_socklite_SLTcpPacket_setCompressMinSize'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1)
+    {
+        int arg0;
+        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "socklite.SLTcpPacket:setCompressMinSize");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_socklite_SLTcpPacket_setCompressMinSize'", nullptr);
+            return 0;
+        }
+        cobj->setCompressMinSize(arg0);
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "socklite.SLTcpPacket:setCompressMinSize",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_socklite_SLTcpPacket_setCompressMinSize'.",&tolua_err);
+#endif
+
+    return 0;
+}
+
+int lua_cocos2dx_socklite_SLTcpPacket_setNetTeakey(lua_State* tolua_S)
+{
+    int argc = 0;
+    socklite::SLTcpPacket* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"socklite.SLTcpPacket",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (socklite::SLTcpPacket*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj)
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_socklite_SLTcpPacket_setNetTeakey'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1)
+    {
+        const char* arg0;
+        std::string arg0_tmp;
+        ok &= luaval_to_std_string(tolua_S, 2, &arg0_tmp, "socklite.SLTcpPacket:setNetTeakey");
+        arg0 = (char*)arg0_tmp.c_str();
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_socklite_SLTcpPacket_setNetTeakey'", nullptr);
+            return 0;
+        }
+        cobj->setNetTeakey(arg0);
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "socklite.SLTcpPacket:setNetTeakey",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_socklite_SLTcpPacket_setNetTeakey'.",&tolua_err);
+#endif
+
+    return 0;
+}
+
 int lua_cocos2dx_socklite_SLTcpPacket_newPacket(lua_State* tolua_S)
 {
     int argc = 0;
@@ -1315,9 +1095,12 @@ int lua_register_cocos2dx_socklite_SLTcpPacket(lua_State* tolua_S)
         tolua_function(tolua_S,"getSn",lua_cocos2dx_socklite_SLTcpPacket_getSn);
         tolua_function(tolua_S,"ReadU16",lua_cocos2dx_socklite_SLTcpPacket_ReadU16);
         tolua_function(tolua_S,"ReadU32",lua_cocos2dx_socklite_SLTcpPacket_ReadU32);
-        tolua_function(tolua_S,"getPacketType",lua_cocos2dx_socklite_SLTcpPacket_getPacketType);
         tolua_function(tolua_S,"ReadS8",lua_cocos2dx_socklite_SLTcpPacket_ReadS8);
+        tolua_function(tolua_S,"getPacketType",lua_cocos2dx_socklite_SLTcpPacket_getPacketType);
         tolua_function(tolua_S,"setPacketType",lua_cocos2dx_socklite_SLTcpPacket_setPacketType);
+        tolua_function(tolua_S,"getCompressMinSize",lua_cocos2dx_socklite_SLTcpPacket_getCompressMinSize);
+        tolua_function(tolua_S,"setCompressMinSize",lua_cocos2dx_socklite_SLTcpPacket_setCompressMinSize);
+        tolua_function(tolua_S,"setNetTeakey",lua_cocos2dx_socklite_SLTcpPacket_setNetTeakey);
         tolua_function(tolua_S,"newPacket", lua_cocos2dx_socklite_SLTcpPacket_newPacket);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(socklite::SLTcpPacket).name();
@@ -1326,56 +1109,6 @@ int lua_register_cocos2dx_socklite_SLTcpPacket(lua_State* tolua_S)
     return 1;
 }
 
-int lua_cocos2dx_socklite_SLTcpClient_update(lua_State* tolua_S)
-{
-    int argc = 0;
-    socklite::SLTcpClient* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"socklite.SLTcpClient",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (socklite::SLTcpClient*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_socklite_SLTcpClient_update'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 1) 
-    {
-        double arg0;
-
-        ok &= luaval_to_number(tolua_S, 2,&arg0, "socklite.SLTcpClient:update");
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_socklite_SLTcpClient_update'", nullptr);
-            return 0;
-        }
-        cobj->update(arg0);
-        lua_settop(tolua_S, 1);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "socklite.SLTcpClient:update",argc, 1);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_socklite_SLTcpClient_update'.",&tolua_err);
-#endif
-
-    return 0;
-}
 int lua_cocos2dx_socklite_SLTcpClient_setEventListener(lua_State* tolua_S)
 {
     int argc = 0;
@@ -1469,6 +1202,53 @@ int lua_cocos2dx_socklite_SLTcpClient_isSocketConnect(lua_State* tolua_S)
 #if COCOS2D_DEBUG >= 1
     tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_socklite_SLTcpClient_isSocketConnect'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_socklite_SLTcpClient_getSocketState(lua_State* tolua_S)
+{
+    int argc = 0;
+    socklite::SLTcpClient* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"socklite.SLTcpClient",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (socklite::SLTcpClient*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj)
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_socklite_SLTcpClient_getSocketState'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0)
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_socklite_SLTcpClient_getSocketState'", nullptr);
+            return 0;
+        }
+        int ret = (int) cobj->getSocketState();
+        tolua_pushnumber(tolua_S, ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "socklite.SLTcpClient:getSocketState",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_socklite_SLTcpClient_getSocketState'.",&tolua_err);
 #endif
 
     return 0;
@@ -1696,9 +1476,9 @@ int lua_register_cocos2dx_socklite_SLTcpClient(lua_State* tolua_S)
     tolua_cclass(tolua_S,"SLTcpClient","socklite.SLTcpClient","cc.Ref",nullptr);
 
     tolua_beginmodule(tolua_S,"SLTcpClient");
-        tolua_function(tolua_S,"update",lua_cocos2dx_socklite_SLTcpClient_update);
         tolua_function(tolua_S,"setEventListener",lua_cocos2dx_socklite_SLTcpClient_setEventListener);
         tolua_function(tolua_S,"isSocketConnect",lua_cocos2dx_socklite_SLTcpClient_isSocketConnect);
+        tolua_function(tolua_S,"getSocketState",lua_cocos2dx_socklite_SLTcpClient_getSocketState);
         tolua_function(tolua_S,"connect",lua_cocos2dx_socklite_SLTcpClient_connect);
         tolua_function(tolua_S,"sendPacket",lua_cocos2dx_socklite_SLTcpClient_sendPacket);
         tolua_function(tolua_S,"close",lua_cocos2dx_socklite_SLTcpClient_close);
@@ -1718,7 +1498,6 @@ TOLUA_API int register_all_cocos2dx_socklite(lua_State* tolua_S)
 
 	lua_register_cocos2dx_socklite_SLTcpClient(tolua_S);
 	lua_register_cocos2dx_socklite_SLTcpPacket(tolua_S);
-	lua_register_cocos2dx_socklite_SLTcpSession(tolua_S);
 
 	tolua_endmodule(tolua_S);
 	return 1;

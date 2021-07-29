@@ -2,9 +2,7 @@
 //  SLMacros.h
 //
 //  Created by joli on 2018/9/6.
-//  Copyright ? 2018Äê uzone. All rights reserved.
 //
-
 #ifndef SLMacros_h
 #define SLMacros_h
 
@@ -25,6 +23,7 @@
 
 #define SL_DELETE(p)            do { delete (p);   (p) = NULL; } while(0)
 #define SL_DELETE_ARRAY(p)      do { delete[] (p); (p) = NULL; } while(0)
+#define SL_SAFE_FREE(p)         do { if(p) { free(p); (p) = nullptr; } } while(0)
 #define SL_SAFE_DELETE(p)       if (p) { SL_DELETE(p); }
 #define SL_SAFE_DELETE_ARRAY(p) if (p) { SL_DELETE_ARRAY(p); }
 #define SL_BREAK_IF(cond)       if (cond) { break; }
@@ -33,4 +32,4 @@
 #define NS_SOCKLITE_END     }
 #define USING_NS_SOCKLITE   using namespace socklite
 
-#endif /* SLMacros_h */
+#endif/* SLMacros_h */

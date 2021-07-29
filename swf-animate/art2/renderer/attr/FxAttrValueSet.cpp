@@ -9,7 +9,9 @@
 
 NS_FLASHX_BEGIN
 
-FxAttrValueSet::FxAttrValueSet():_values(nullptr)
+FxAttrValueSet::FxAttrValueSet()
+:_values(nullptr)
+//,_size(0)
 {
 }
 
@@ -20,13 +22,11 @@ FxAttrValueSet::~FxAttrValueSet()
 
 void FxAttrValueSet::parse(FxByteArray *buffer, const u8& size)
 {
-    f32 *values = new f32[size];
+    _values = new f32[size];
     for (u8 n=0; n<size; ++n) {
-        values[n] = buffer->readFloat();
+        _values[n] = buffer->readFloat();
         //FXLOG("%f", values[n]);
     }
-    //_size = size;
-    _values = values;
 }
 
 NS_FLASHX_END /* NS_FLASHX_BEGIN */

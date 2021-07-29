@@ -9,10 +9,10 @@
 #define FxStrArray_h
 
 #include "flashx/basic/FxString.h"
+#include <vector>
 
 NS_FLASHX_BEGIN
 
-#include <vector>
 typedef std::vector<fxstr> FxStrArray;
 
 NS_FLASHX_END /* NS_FLASHX_BEGIN */

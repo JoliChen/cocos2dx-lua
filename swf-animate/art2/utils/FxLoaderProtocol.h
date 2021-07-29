@@ -15,7 +15,7 @@ NS_FLASHX_BEGIN
 class FxLoaderProtocol {
 public:
     
-    virtual void loadFinish(const bool& isOk) = 0;
+    virtual void onLoadFinish(const bool& isOk) = 0;
 };
 
 NS_FLASHX_END /* NS_FLASHX_BEGIN */

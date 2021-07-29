@@ -65,4 +65,18 @@ int register_all_cocos2dx_flashx(lua_State* tolua_S);
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif // __cocos2dx_flashx_h__

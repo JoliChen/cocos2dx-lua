@@ -11,9 +11,7 @@ NS_FLASHX_BEGIN
 
 #define _minimumFrame 0
 
-#if FX_USING_SCRIPT
-#define MY_SCRIPT_CLASS "FxFrameAnimate"
-#endif
+
 
 FxFBF::FxFBF():_isCircle(false), _isComplete(false), _frameStep(0), _totalFrames(0), _currentFrame(0), _maximumFrame(0)
 {
@@ -79,7 +77,7 @@ void FxFBF::gotoAndStop(const u16& frame)
 
 void FxFBF::onTick()
 {
-    if (canRender()) {
+    if (_totalFrames > 0) {
         if (_isCircle) {
             onEnterFrame();
             const int next = _currentFrame + _frameStep;
@@ -108,25 +106,26 @@ void FxFBF::onTick()
 
 void FxFBF::onEnterFrame()
 {
-    const u16& frame = _currentFrame;
+    const u16 &frame = _currentFrame;
     //FXLOG("%lu FxFBF::%s frame:%d", clock(), __func__, frame);
     onRenderFrame(frame);
 #if FX_USING_SCRIPT
-    forit(_scriptEnterFrameRegMap, iter) {
-        if (frame == iter->first) {
+    auto scriptIter = _scriptEnterFrameRegMap.find(frame);
+    if (scriptIter != _scriptEnterFrameRegMap.end()) {
+        const FX_SCRIPT_FUNCTION func = scriptIter->second;
+        if (0 != func) {
             LuaStack *stack = LuaEngine::getInstance()->getLuaStack();
-            pushSelfToStack(stack, MY_SCRIPT_CLASS);
+            this->pushSelfToStack(stack);
             stack->pushInt(frame);
-            stack->executeFunctionByHandler(iter->second, 2);
+            stack->executeFunctionByHandler(func, 2);
             stack->clean();
         }
     }
 #endif
 #if FX_USING_CPP
-    forit(_cppEnterFrameRegMap, iter) {
-        if (frame == iter->first) {
-            iter->second->onEnterFrame(this, frame);
-        }
+    auto cppIter = _cppEnterFrameRegMap.find(frame);
+    if (cppIter != _cppEnterFrameRegMap.end()) {
+        cppIter->second->onEnterFrame(this, frame);
     }
 #endif
 }
@@ -138,7 +137,7 @@ void FxFBF::onFinishFrame()
 #if FX_USING_SCRIPT
     if (FxIsScriptFunction(_scriptFrameEndedHandler)) {
         LuaStack *stack = LuaEngine::getInstance()->getLuaStack();
-        pushSelfToStack(stack, MY_SCRIPT_CLASS);
+        this->pushSelfToStack(stack);
         stack->executeFunctionByHandler(_scriptFrameEndedHandler, 1);
         stack->clean();
     }
@@ -174,7 +173,7 @@ bool FxFBF::delScriptEnterFrameHandler(const u16& frame, const FX_SCRIPT_FUNCTIO
 {
     auto it = _scriptEnterFrameRegMap.find(frame);
     if (it != _scriptEnterFrameRegMap.end()) {
-        if (FxIsScriptFunction(handler) && (handler == it->second)) {
+        if (!FxIsScriptFunction(handler) || (handler == it->second)) {
             LuaEngine::getInstance()->removeScriptHandler(handler);
             _scriptEnterFrameRegMap.erase(it);
             return true;
@@ -185,10 +184,12 @@ bool FxFBF::delScriptEnterFrameHandler(const u16& frame, const FX_SCRIPT_FUNCTIO
 
 void FxFBF::delAllScriptEnterFrameHandlers()
 {
-    forit(_scriptEnterFrameRegMap, it) {
-        LuaEngine::getInstance()->removeScriptHandler(it->second);
+    LuaEngine *engine = LuaEngine::getInstance();
+    for (auto it=_scriptEnterFrameRegMap.begin(); it!=_scriptEnterFrameRegMap.end(); /*it++*/)
+    {
+        engine->removeScriptHandler(it->second);
+        _scriptEnterFrameRegMap.erase(it++);
     }
-    _scriptEnterFrameRegMap.clear();
 }
 
 void FxFBF::setScriptFrameEndedHandler(const FX_SCRIPT_FUNCTION& handler /* FX_SCRIPT_NONE_FUN */)

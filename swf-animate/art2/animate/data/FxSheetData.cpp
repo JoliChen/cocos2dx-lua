@@ -9,7 +9,8 @@
 
 NS_FLASHX_BEGIN
 
-FxSheetData::FxSheetData():_frames(nullptr)
+FxSheetData::FxSheetData()
+:_frames(nullptr)
 {
 }
 

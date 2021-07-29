@@ -1,16 +1,34 @@
 
 --------------------------------
 -- @module FxArtManager
--- @extend FxUnitManager,FxAtlasManager,FxDataManager
+-- @extend FxUnitManager
 -- @parent_module flashx
 
 --------------------------------
--- 获取动画资源列表<br>
--- param animateId 动画ID
--- @function [parent=#FxArtManager] getAnimateRes 
+-- @overload self, flashx.FxAnimateData         
+-- @overload self, unsigned int         
+-- @function [parent=#FxArtManager] getAnimateRes
 -- @param self
 -- @param #unsigned int animateId
 -- @return array_table#array_table ret (return value: array_table)
+
+--------------------------------
+-- 归还资源集<br>
+-- param retianRes 引用的动画资源表
+-- @function [parent=#FxArtManager] releaseAtlasSet 
+-- @param self
+-- @param #array_table retianRes
+-- @return FxArtManager#FxArtManager self (return value: flashx.FxArtManager)
+        
+--------------------------------
+-- 引用动画资源<br>
+-- param animateData 动画数据<br>
+-- param retianRes 引用的动画资源表
+-- @function [parent=#FxArtManager] retainAnimateRes 
+-- @param self
+-- @param #flashx.FxAnimateData animateData
+-- @param #array_table retianRes
+-- @return bool#bool ret (return value: bool)
         
 --------------------------------
 -- 初始化<br>

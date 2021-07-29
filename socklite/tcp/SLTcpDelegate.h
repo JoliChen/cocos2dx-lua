@@ -8,7 +8,7 @@
 #ifndef SLTcpDelegate_h
 #define SLTcpDelegate_h
 
-#include "socklite/tcp/packet/SLTcpRecvPacket.h"
+#include "socklite/base/SLMacros.h"
 
 NS_SOCKLITE_BEGIN
 
@@ -41,9 +41,10 @@ public:
     /**
      * 接收数据包
      * @param session TCP会话
-     * @param packet  数据包
+     * @param buf 数据流
+     * @param len 长度
      */
-    virtual void onRecvPacket(SLTcpSession *session, SLTcpRecvPacket* packet) = 0;
+    virtual void onRecvPacket(SLTcpSession *session, const packet_byte *buf, const packet_size &len) = 0;
 };
 
 NS_SOCKLITE_END

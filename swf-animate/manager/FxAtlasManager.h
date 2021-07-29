@@ -13,6 +13,7 @@ USING_NS_CC;
 
 #include "flashx/basic/FxString.h"
 #include "flashx/basic/FxDigits.h"
+#include "flashx/basic/FxStrArray.h"
 
 NS_FLASHX_BEGIN
 
@@ -25,6 +26,16 @@ typedef std::function<void(Texture2D* texture)> loadTexHandler;
 class FxAtlasManager {
 public:
     static FxAtlasManager* getInstance();
+    
+    /**
+     * 删除所有缓存的图集
+     */
+    void clear();
+    
+    /**
+     * 删除未使用的图集
+     */
+    void removeUnsuedAtlas();
     
     /**
      * 计算图集数量
@@ -57,6 +68,12 @@ public:
     void releaseAtlas(const fxstr& plistPath);
     
     /**
+     * 归还资源集
+     * @param atlasArray 引用的动画资源表
+     */
+    void releaseMuiltAtlas(FxStrArray& atlasArray);
+    
+    /**
      * 载入图集纹理
      * @param plistPath 图集配置路径
      * @param callback 回调
@@ -73,11 +90,6 @@ public:
     Texture2D* loadImageByFormat(const fxstr& imagePath,
                                  const loadTexHandler& callback = nullptr,
                                  Texture2D::PixelFormat format = Texture2D::PixelFormat::RGBA4444);
-
-    /**
-     * 删除未使用的图集
-     */
-    void removeUnsuedAtlas();
     
 private:
     FxAtlasManager();

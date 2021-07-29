@@ -13,57 +13,52 @@ USING_NS_CC;
 
 NS_SOCKLITE_BEGIN
 
-SLTcpClient::SLTcpClient():isConnecting(false)
+SLTcpClient::SLTcpClient():_scriptFunc(0)
 {
-    tcpSession = new (std::nothrow) SLTcpSession();
-    tcpSession->setDelegate(this);
+    _packetInst = SLTcpPacket::singleton();
+    _session = new (std::nothrow) SLTcpSession();
+    _session->setDelegate(this);
     Director::getInstance()->getScheduler()->scheduleUpdate(this, Scheduler::PRIORITY_NON_SYSTEM_MIN, false);
 }
 
 SLTcpClient::~SLTcpClient()
 {
-    isConnecting = false;
     Director::getInstance()->getScheduler()->unscheduleUpdate(this);
-    SL_SAFE_DELETE(tcpSession);
+    SL_SAFE_DELETE(_session);
+    _packetInst = nullptr;
+    _scriptFunc = 0;
 }
 
 SLTcpClient * SLTcpClient::create()
 {
 	SLTcpClient *client = new (std::nothrow) SLTcpClient();
-    client->autorelease();
-	return client;
-}
-
-void SLTcpClient::update(const f32& dt)
-{
-    tcpSession->mainThreadTick(dt);
-    // TODO tick to script
-}
-
-void SLTcpClient::connect(const char *host, u16 port)
-{
-    if (isConnecting) {
-        SL_LOG("could not connect again");
-        return;
+    if (client)
+    {
+        client->autorelease();
+        return client;
     }
-    isConnecting = true;
-    tcpSession->connect(host, port);
+    return nullptr;
 }
 
-void SLTcpClient::close(bool cleanup)
+void SLTcpClient::update(const f32 &dt)
 {
-    tcpSession->synchronizeClose(cleanup);
+    _session->update(dt);
+}
+
+void SLTcpClient::close(bool cleanup/*true*/)
+{
+    _session->close();
 }
 
 void SLTcpClient::sendPacket(SLTcpPacket *message)
 {
     SL_ASSERT(message, "the packet must been not null");
-    packet_byte *buffer = NULL;
-    const packet_size &length = message->encode(&buffer);
-    if (buffer) {
-        SLTcpSendPacket *packet = new (std::nothrow) SLTcpSendPacket(buffer, length);
-        tcpSession->send(packet);
+    packet_byte *buffer = nullptr;
+    const packet_size length = message->encode(&buffer);
+    if (length > 0) {
+        _session->send(buffer, length);
     }
+    SL_SAFE_FREE(buffer);
 }
 
 void SLTcpClient::onCloseResp(SLTcpSession *session, const bool& isOk)
@@ -71,18 +66,16 @@ void SLTcpClient::onCloseResp(SLTcpSession *session, const bool& isOk)
     SL_LOG("SLTcpClient::%s  ret:%d", __func__, isOk);
 
 	LuaStack* stack = LuaEngine::getInstance()->getLuaStack();
-	lua_State* tolua_S = stack->getLuaState();
 	stack->pushString("onCloseResp");
-	tolua_pushusertype(tolua_S, (void*)session, "socklite.SLTcpSession");
+    stack->pushBoolean(true);//extension parameter
 	stack->pushBoolean(isOk);
-	stack->executeFunctionByHandler(eventListener, 3);
+	stack->executeFunctionByHandler(_scriptFunc, 3);
 	stack->clean();
 }
 
 void SLTcpClient::onConnectResp(SLTcpSession *session, const bool& isOk)
 {
     SL_LOG("SLTcpClient::%s ret:%d", __func__, isOk);
-    isConnecting = false;
     
     //if (isOk) {
     //    char* buf = new char[8];
@@ -91,11 +84,10 @@ void SLTcpClient::onConnectResp(SLTcpSession *session, const bool& isOk)
     //}
 
 	LuaStack* stack = LuaEngine::getInstance()->getLuaStack();
-	lua_State* tolua_S = stack->getLuaState();
 	stack->pushString("onConnectResp");
-	tolua_pushusertype(tolua_S, (void*)session, "socklite.SLTcpSession");
+    stack->pushBoolean(true);//extension parameter
 	stack->pushBoolean(isOk);
-	stack->executeFunctionByHandler(eventListener, 3);
+	stack->executeFunctionByHandler(_scriptFunc, 3);
 	stack->clean();
 }
 
@@ -105,24 +97,22 @@ void SLTcpClient::onDisconnect(SLTcpSession *session)
     // tcpSession->connect("169.254.182.49", 9001);
 
 	LuaStack* stack = LuaEngine::getInstance()->getLuaStack();
-	lua_State* tolua_S = stack->getLuaState();
 	stack->pushString("onDisconnect");
-	tolua_pushusertype(tolua_S, (void*)session, "socklite.SLTcpSession");
-	stack->executeFunctionByHandler(eventListener, 2);
+    stack->pushBoolean(true);//extension parameter
+	stack->executeFunctionByHandler(_scriptFunc, 2);
 	stack->clean();
 }
 
-void SLTcpClient::onRecvPacket(SLTcpSession *session, SLTcpRecvPacket* packet)
+void SLTcpClient::onRecvPacket(SLTcpSession *session, const packet_byte *buf, const packet_size &len)
 {
     //SL_LOG("%s: [%d : %s]", __func__, packet->getLength(), packet->getBuffer());
-    SLTcpPacket *message = SLTcpPacket::singleton();
-    message->decode(packet->getBuffer(), packet->getLength());
+    _packetInst->decode(buf, len);
 
 	LuaStack* stack = LuaEngine::getInstance()->getLuaStack();
 	lua_State* tolua_S = stack->getLuaState();
 	stack->pushString("onRecvPacket");
-	tolua_pushusertype(tolua_S, (void*)message, "socklite.SLTcpPacket");
-	stack->executeFunctionByHandler(eventListener, 2);
+	tolua_pushusertype(tolua_S, (void*)_packetInst, "socklite.SLTcpPacket");
+	stack->executeFunctionByHandler(_scriptFunc, 2);
 	stack->clean();
 }
 

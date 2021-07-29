@@ -8,7 +8,7 @@
 #ifndef SLTcpPacket_hpp
 #define SLTcpPacket_hpp
 
-#include "socklite/tcp/packet/SLTcpPakcetProtocol.h"
+#include "socklite/base/SLDefine.h"
 #include "flashx/utils/FxByteArray.h"
 
 NS_SOCKLITE_BEGIN
@@ -16,6 +16,7 @@ NS_SOCKLITE_BEGIN
 typedef flashx::FxByteArray ByteArray;
 
 typedef enum : u8 {
+    SLPacketUnknow   = 0,
     SLPacketRequest  = 1,
     SLPacketResponse = 2,
     SLPacketPush     = 3,
@@ -27,12 +28,17 @@ class SLTcpPacket {
 public:
     static SLTcpPacket* singleton();
     
-    void reset(const u8 &sn, const u8 &module, const u8 &cmd, const char *body, const u8 &style = 3);
-    void decode(packet_byte *buffer, const packet_size &length);
+    void reset(const u8 &sn, const u8 &module, const u8 &cmd, const char *buf, const u8 &style = 3);
+    void decode(const packet_byte *buffer, const packet_size &length);
     packet_size encode(packet_byte **bufferPtr);
     
     void setPacketType(const SLPacketType& type) { this->type = type; }
     const SLPacketType& getPacketType() const { return type; }
+    
+    void setCompressMinSize(const int &size) {this->compressMinSize = size;}
+    const int getCompressMinSize() const {return this->compressMinSize;}
+    
+    void setNetTeakey(const char* key);
     
     const u8& getSn()     const { return sn; }
     const u8& getStyle()  const { return style; }
@@ -60,6 +66,9 @@ private:
     u8 sn, style, module, cmd;
     ByteArray *body;
     SLPacketType type;
+    int compressMinSize;
+    char* teakey;
+    int tealen;
 };
 
 NS_SOCKLITE_END

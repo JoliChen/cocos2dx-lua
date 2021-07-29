@@ -21,17 +21,11 @@ class FxMultloader : public Ref {
 public:
     static FxMultloader* create();
     virtual ~FxMultloader();
-    
-
     void load(const FxStrArray& loadList, FxLoaderProtocol* delegate);
-
-    void stopLoad();
     
 private:
     FxMultloader();
-    
     void loadNext();
-    
     void loadDone(const fxstr& plistPath, Texture2D* texture);
     
     short loadStep;

@@ -8,97 +8,51 @@
 #ifndef SLTcpSession_h
 #define SLTcpSession_h
 
+#include <string>
+//#include <atomic>
+#include "socklite/base/SLSockFast.h"
 #include "socklite/tcp/SLTcpDelegate.h"
-#include "socklite/tcp/packet/SLTcpSendPacket.h"
-#include "socklite/tcp/packet/SLTcpRecvPacket.h"
-#include <atomic>
 
 NS_SOCKLITE_BEGIN
 
-class SLTcpSocket;
-class SLTcpHandThread;
-class SLTcpSendThread;
-class SLTcpRecvThread;
+#define MAX_SOCK_CONN_SEC 30
 
-typedef enum : byte {
-    TcpSockClosed,
-    TcpSockLinked
-} SLTcpStatus;
+enum SLConnState
+{
+    DISCONN = 0,
+    CONNING = 1,
+    CONNED  = 2
+};
 
 class SLTcpSession {
 public:
-    
     SLTcpSession();
     virtual ~SLTcpSession();
     
-    /**
-     * 设置事件代理
-     * @param delegate 代理对象
-     */
     void setDelegate(SLTcpDelegate *delegate);
+    void update(const f32 &dt);
     
-    /**
-     * 主线程心跳
-     * @param dt 单位时间
-     */
-    void mainThreadTick(const f32& dt);
-    
-    /**
-     * 发送
-     * @param packet 数据包
-     */
-    void send(SLTcpSendPacket *packet);
-
-    /**
-     * 连接
-     * @param host 主机地址
-     * @param port 主机端口
-     */
-    void connect(const char *host, u16 port);
-    
-    /**
-     * 关闭
-     */
+    SLConnState getConnectState() const {return _connStat;}
+    void connect(std::string host, u16 port);
     void close();
-    
-    /**
-     * 同步关闭
-     * @param cleanup 是否清理缓存
-     */
-    void synchronizeClose(bool cleanup = true);
-    
-    bool isSocketConnect() { return (TcpSockLinked == socketState); }
-    
+    bool send(const char *buf, const int &len);
+        
 private:
-    /**
-     * 连接回调
-     * @param isOk 是否成功
-     */
-    void onConnectResult(bool isOk);
+    void flushout();
+    void flushin(int depth=0);
+    void handleIO();
     
-    /**
-     * 连接断开
-     * @param isOk 是否成功
-     */
-    void onCloseResult(bool isOk);
+    SLSockFast _socket;
+    SLTcpDelegate *_delegate;
     
-    /**
-     * 刷新
-     */
-    void socketRefresh();
-    
-    /**
-     * 分发接收的包
-     */
-    void dispatchRecvdPackets();
-    
-    SLTcpSocket *socket;
-    SLTcpStatus socketState;
-    SLTcpDelegate *delegate;
-    SLTcpHandThread *handThread;
-    SLTcpSendThread *sendThread;
-    SLTcpRecvThread *recvThread;
-    
+    SLConnState _connStat;
+    f32 _connTime;
+    //std::shared_ptr<std::atomic<bool>> _isDestroyed;
+    int _sendBufLen;//available
+    int _recvBufLen;//available
+    int _recvBufPos;//ringbuffer
+    packet_byte _sendBuffer[SEND_BUF_SIZE];
+    packet_byte _recvBuffer[RECV_BUF_SIZE];
 };
 
 NS_SOCKLITE_END /* NS_SOCKLITE_BEGIN */

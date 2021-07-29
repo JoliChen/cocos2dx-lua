@@ -2,9 +2,7 @@
 //  SLDefine.h
 //
 //  Created by joli on 2018/9/7.
-//  Copyright ? 2018Äê uzone. All rights reserved.
 //
-
 #ifndef SLDefine_h
 #define SLDefine_h
 
@@ -19,6 +17,14 @@ typedef char            byte;
 typedef float           f32;
 typedef double          f64;
 
-NS_SOCKLITE_END /* NS_SOCKLITE_BEGIN */
+#define SEND_BUF_SIZE (16*1024)
+#define RECV_BUF_SIZE (32*1024)
+#define RECV_BUF_IEND (RECV_BUF_SIZE-1)
+#define MAX_PACKET_SIZE (30*1024)
+#define PACKET_SIZE_BT 2
+typedef u16  packet_size;
+typedef byte packet_byte;
 
-#endif /* SLDefine_h */
+NS_SOCKLITE_END/* NS_SOCKLITE_BEGIN */
+
+#endif/* SLDefine_h */

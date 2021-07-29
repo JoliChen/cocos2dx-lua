@@ -27,11 +27,6 @@ FxMultloader::FxMultloader():loadStep(0),delegate(nullptr)
 
 FxMultloader::~FxMultloader()
 {
-    stopLoad();
-}
-
-void FxMultloader::stopLoad()
-{
     delegate = nullptr;
     if (!loadList.empty()) {
         loadList.clear();
@@ -57,11 +52,13 @@ void FxMultloader::loadNext()
 {
     if (--loadStep < 0) {
         if (delegate) {
-            delegate->loadFinish(true);
+            delegate->onLoadFinish(true);
         }
         return;
     }
+    
     retain();// retain loader
+    
     const fxstr& plistPath = loadList[loadStep];
     FxAtlasManager::getInstance()->loadAtlasTexture(plistPath, std::bind(&FxMultloader::loadDone, this, plistPath, std::placeholders::_1));
 }
@@ -71,16 +68,17 @@ void FxMultloader::loadDone(const fxstr& plistPath, Texture2D* texture)
     if (!delegate || getReferenceCount() == 1) {
         release();// release loader
         return;
+    } else {
+        release();// release loader
     }
     
-    release();// release loader
     if (!texture) {
-        delegate->loadFinish(false);
+        delegate->onLoadFinish(false);
         return;
     }
     
     if (!FxAtlasManager::getInstance()->retainAtlas(plistPath, texture)) {
-        delegate->loadFinish(false);
+        delegate->onLoadFinish(false);
         return;
     }
     
