@@ -1,0 +1,6 @@
+
+            // if (!nodeFS) nodeFS = require("fs");
+            // if (!nodePath) nodePath = require("path");
+            // filename = nodePath["normalize"](filename);
+            // return nodeFS["readFileSync"](filename, binary ? null : "utf8")
+            return console.error("node_modules missing, please file a issue at https://github.com/cocos-creator/ammo.js");

@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../../../../../../../cocos/core/assets/index.ts"],"names":["Asset","BufferAsset","default","RenderingSubMesh","ImageAsset","Texture2D","TextureCube","EffectAsset","Material","RenderTexture"],"mappings":";;;;;gCAiCSA,K;;4CACAC,W;;kCACAC,O;;;;;;;;;;sDAEAC,gB;;0CACAD,O;;wCACAA,O;;wCACAA,O;;0CACAE,U;;wCACAC,S;;4CACAC,W;;4CACAC,W;;sCACAC,Q;;gDACAC,a"}
