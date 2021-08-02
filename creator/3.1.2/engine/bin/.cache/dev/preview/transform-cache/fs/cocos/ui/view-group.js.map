@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../../../../../../../cocos/ui/view-group.ts"],"names":["ccclass","executionOrder","Component","legacyCC","ViewGroup"],"mappings":";;;;;;;;;;;AA6CSA,MAAAA,O,8BAAAA,O;AAASC,MAAAA,c,8BAAAA,c;;AACTC,MAAAA,S,0BAAAA,S;;AACAC,MAAAA,Q,wBAAAA,Q;;;2BAIIC,S,WAFZJ,OAAO,CAAC,cAAD,C,UACPC,cAAc,CAAC,GAAD,C;;;;;;;;QACgBC,S;;AAI/BC,MAAAA,QAAQ,CAACC,SAAT,GAAqBA,SAArB"}
