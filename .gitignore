@@ -3,6 +3,7 @@
 
 # cocoscreator
 /creator/3.1.2/engine/bin/
+/creator/3.1.2/engine-native/simulator/
 
 # examples
 /tests
